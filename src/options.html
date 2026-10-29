@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Focus Site Blocker – Settings</title>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>Focus Site Blocker</h1>
+      <label class="switch">
+        <input type="checkbox" id="enabled" role="switch">
+        <span id="enabledLabel">Blocking on</span>
+      </label>
+    </header>
+
+    <section aria-labelledby="h-sites">
+      <h2 id="h-sites">Blocked websites</h2>
+      <form id="addForm" class="row" novalidate>
+        <label for="domainInput" class="sr">Domain to block</label>
+        <input id="domainInput" type="text" placeholder="instagram.com" autocomplete="off" spellcheck="false">
+        <button type="submit" class="primary">Add</button>
+      </form>
+      <p class="hint">Subdomains such as www and m are blocked automatically. Changes apply immediately.</p>
+      <p id="domainError" class="error" role="alert" hidden></p>
+      <ul id="domainList" class="list"></ul>
+      <p id="emptyList" class="hint" hidden>No websites blocked yet. Add one above.</p>
+    </section>
+
+    <section aria-labelledby="h-screen">
+      <h2 id="h-screen">Blocking screen</h2>
+      <div class="field">
+        <label for="imageInput">Image (PNG, JPG or WebP, up to 2 MB)</label>
+        <div class="row">
+          <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp">
+          <button id="removeImage" type="button">Remove image</button>
+        </div>
+        <p id="imageError" class="error" role="alert" hidden></p>
+      </div>
+      <div class="field">
+        <label for="headline">Headline</label>
+        <input id="headline" type="text" maxlength="80">
+      </div>
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea id="message" rows="3" maxlength="300"></textarea>
+      </div>
+      <div class="field">
+        <label for="audioMode">Blocked-page audio</label>
+        <select id="audioMode">
+          <option value="none">No audio</option>
+          <option value="upload">Upload an audio file</option>
+          <option value="url">Use an audio URL</option>
+        </select>
+        <p class="hint">Audio loops while the blocked page is open. Your browser may require you to select Play sound.</p>
+      </div>
+      <div id="audioUploadField" class="field" hidden>
+        <label for="audioInput">Audio file (MP3, WAV, OGG, MP4 or WebM, up to 4 MB)</label>
+        <input id="audioInput" type="file" accept="audio/mpeg,audio/wav,audio/x-wav,audio/ogg,audio/mp4,audio/webm">
+      </div>
+      <div id="audioUrlField" class="field" hidden>
+        <label for="audioUrl">Audio URL (HTTP or HTTPS)</label>
+        <input id="audioUrl" type="url" maxlength="2048" placeholder="https://example.com/focus.mp3" autocomplete="url">
+      </div>
+      <p id="audioError" class="error" role="alert" hidden></p>
+      <div class="row">
+        <button id="removeAudio" type="button">Remove audio</button>
+      </div>
+      <div class="row">
+        <button id="saveScreen" type="button" class="primary">Save blocking screen</button>
+      </div>
+
+      <h3>Preview</h3>
+      <iframe id="preview" title="Blocking screen preview" src="blocked.html?preview=1"></iframe>
+    </section>
+
+    <section aria-labelledby="h-more">
+      <h2 id="h-more">Strict mode</h2>
+      <label class="check">
+        <input type="checkbox" id="strict">
+        <span>Make it harder to turn blocking off, remove sites, or change this setting</span>
+      </label>
+      <p class="hint">Strict mode adds a 20-second wait and a typed phrase. It is friction against impulse, not a lock: you can still disable the extension from chrome://extensions.</p>
+    </section>
+
+    <footer>
+      <p id="status" role="status" aria-live="polite"></p>
+      <button id="reset" type="button" class="danger">Reset to defaults</button>
+    </footer>
+  </div>
+
+  <dialog id="guard" aria-labelledby="guardTitle">
+    <h2 id="guardTitle"></h2>
+    <p id="guardBody"></p>
+    <div id="phraseRow" hidden>
+      <label for="guardPhrase">Type <strong id="phraseText"></strong> to continue</label>
+      <input id="guardPhrase" type="text" autocomplete="off" spellcheck="false">
+    </div>
+    <p id="guardCount" class="hint"></p>
+    <div class="row end">
+      <button id="guardCancel" type="button">Cancel</button>
+      <button id="guardConfirm" type="button" class="danger" disabled>Confirm</button>
+    </div>
+  </dialog>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>

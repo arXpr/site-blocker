@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Site blocked</title>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="blocked.css">
+</head>
+<body>
+  <main>
+    <img id="image" alt="" hidden>
+    <p id="site" class="site"></p>
+    <h1 id="headline"></h1>
+    <p id="message"></p>
+    <audio id="audio" loop></audio>
+    <p id="audioStatus" class="audio-status" role="status" hidden></p>
+    <button id="playAudio" type="button" hidden>Play sound</button>
+    <div class="actions">
+      <button id="back" type="button">Go Back</button>
+      <button id="newtab" type="button" class="primary">Open New Tab</button>
+    </div>
+  </main>
+  <script type="module" src="blocked.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+:root {
+  --bg: #f6f4f0;
+  --surface: #fffefb;
+  --text: #25221f;
+  --muted: #6b645c;
+  --border: #d8d2c8;
+  --accent: #7a1f2b;
+  --accent-hover: #621823;
+  --focus: #2b5d8a;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--text); font: 15px/1.5 var(--font); }
+button, input, textarea { font: inherit; color: inherit; }
+button {
+  padding: 7px 14px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; cursor: pointer;
+}
+button:hover:not(:disabled) { border-color: var(--muted); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+button.danger { color: var(--accent); border-color: var(--accent); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }

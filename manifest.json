@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Focus Site Blocker",
+  "version": "1.0.0",
+  "description": "Blocks distracting websites and shows your own image and message instead.",
+  "minimum_chrome_version": "111",
+  "permissions": ["declarativeNetRequest", "storage"],
+  "optional_host_permissions": ["*://*/*"],
+  "background": { "service_worker": "src/background.js", "type": "module" },
+  "action": { "default_title": "Open Focus Site Blocker settings" },
+  "options_page": "src/options.html",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; media-src 'self' data: https: http:;"
+  },
+  "web_accessible_resources": [
+    { "resources": ["src/blocked.html"], "matches": ["<all_urls>"] }
+  ],
+  "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
+}
