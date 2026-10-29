@@ -1,4 +1,4 @@
-import { LIMITS, getSettings, saveSettings, getImage, setImage, clearImage, getAudio, setAudio, clearAudio, isValidAudioUrl, resetAll } from './lib/storage.js';
+import { LIMITS, getSettings, saveSettings, getImage, setImage, clearImage, getAudio, setAudio, clearAudio, getVisitHistory, clearVisitHistory, VISIT_HISTORY_PREFIX, isValidAudioUrl, resetAll } from './lib/storage.js';
 import { normalizeDomain } from './lib/domain.js';
 import { syncRules, originFor } from './lib/rules.js';
 
@@ -103,6 +103,8 @@ function render() {
   $('enabled').checked = settings.enabled;
   $('enabledLabel').textContent = settings.enabled ? 'Blocking on' : 'Blocking off';
   $('strict').checked = settings.strict;
+  $('visitHistoryEnabled').checked = settings.visitHistoryEnabled;
+  $('captureOnBlockedVisit').checked = settings.captureOnBlockedVisit;
   updateAudioFields();
 
   const list = $('domainList');
@@ -149,6 +151,36 @@ function render() {
   }
   $('emptyList').hidden = settings.domains.length > 0;
   pushPreview();
+}
+
+async function renderVisitHistory() {
+  const historyList = $('visitHistory');
+  historyList.replaceChildren();
+  const visits = await getVisitHistory();
+  for (const visit of visits) {
+    const item = document.createElement('li');
+    if (visit.photo) {
+      const photo = document.createElement('img');
+      photo.src = visit.photo;
+      photo.alt = 'Selfie captured when this blocked page opened';
+      item.append(photo);
+    }
+    const details = document.createElement('div');
+    details.className = 'entry';
+    const site = document.createElement('strong');
+    site.textContent = visit.site;
+    const time = document.createElement('p');
+    time.textContent = new Date(visit.timestamp).toLocaleString();
+    details.append(site, time);
+    if (!visit.photo) {
+      const note = document.createElement('p');
+      note.textContent = 'No selfie was saved.';
+      details.append(note);
+    }
+    item.append(details);
+    historyList.append(item);
+  }
+  $('emptyHistory').hidden = visits.length > 0;
 }
 
 function updateAudioFields() {
@@ -331,6 +363,26 @@ function bind() {
     if (ok) await persist({ ...settings, strict: false }, 'Strict mode is off.');
   }));
 
+  $('visitHistoryEnabled').addEventListener('change', (e) => attempt(async () => {
+    const enabled = e.target.checked;
+    await persist({
+      ...settings,
+      visitHistoryEnabled: enabled,
+      captureOnBlockedVisit: enabled && settings.captureOnBlockedVisit,
+    }, enabled ? 'Blocked-site visit history is on.' : 'Blocked-site visit history is off.');
+  }));
+
+  $('captureOnBlockedVisit').addEventListener('change', (e) => attempt(async () => {
+    if (!e.target.checked) {
+      await persist({ ...settings, captureOnBlockedVisit: false }, 'Automatic selfie capture is off.');
+      return;
+    }
+    if (!navigator.mediaDevices?.getUserMedia) throw new Error('Camera access is not available in this browser.');
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    stream.getTracks().forEach((track) => track.stop());
+    await persist({ ...settings, visitHistoryEnabled: true, captureOnBlockedVisit: true }, 'Selfie capture and visit history are on.');
+  }));
+
   $('imageInput').addEventListener('change', (e) => attempt(() => onImageChosen(e.target.files[0])));
   $('audioMode').addEventListener('change', updateAudioFields);
   $('audioInput').addEventListener('change', (e) => attempt(() => onAudioChosen(e.target.files[0])));
@@ -354,10 +406,15 @@ function bind() {
   $('message').addEventListener('input', pushPreview);
   $('saveScreen').addEventListener('click', () => attempt(saveScreen));
   $('preview').addEventListener('load', pushPreview);
+  $('clearVisitHistory').addEventListener('click', () => attempt(async () => {
+    await clearVisitHistory();
+    await renderVisitHistory();
+    setStatus('Visit history cleared.', 'ok');
+  }));
 
   $('reset').addEventListener('click', () => attempt(async () => {
     const level = settings.strict ? guardLevel() : { seconds: 0, phrase: null };
-    const ok = await guard({ title: 'Reset to defaults?', body: 'This clears your blocked websites, image, message, audio and strict mode.', ...level, confirmLabel: 'Reset' });
+    const ok = await guard({ title: 'Reset to defaults?', body: 'This clears your blocked websites, image, message, audio, visit history and strict mode.', ...level, confirmLabel: 'Reset' });
     if (!ok) return;
     const { origins = [] } = await chrome.permissions.getAll();
     if (origins.length) await chrome.permissions.remove({ origins }).catch((e) => console.warn(e));
@@ -377,6 +434,9 @@ function bind() {
       await refreshPermissions();
       render();
     });
+    if (area === 'local' && Object.keys(changes).some((key) => key.startsWith(VISIT_HISTORY_PREFIX))) {
+      attempt(renderVisitHistory);
+    }
   });
   const onPermissionsChanged = () => attempt(async () => {
     await refreshPermissions();
@@ -396,6 +456,7 @@ async function load() {
   $('imageInput').value = '';
   $('audioInput').value = '';
   render();
+  await renderVisitHistory();
 }
 
 bind();

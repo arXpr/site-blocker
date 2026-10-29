@@ -77,6 +77,24 @@
       <iframe id="preview" title="Blocking screen preview" src="blocked.html?preview=1"></iframe>
     </section>
 
+    <section aria-labelledby="h-accountability">
+      <h2 id="h-accountability">Visit history</h2>
+      <label class="check">
+        <input type="checkbox" id="visitHistoryEnabled">
+        <span>Log blocked-site visits on this device</span>
+      </label>
+      <label class="check">
+        <input type="checkbox" id="captureOnBlockedVisit">
+        <span>Automatically take a selfie when a blocked page opens</span>
+      </label>
+      <p class="hint">Enabling selfie capture requests camera permission; a selfie is taken automatically each time a blocked page opens. Photos and visit records stay in this browser and are kept for 3 days (up to 50 visits); expired records are removed when history is next opened or a visit is logged. Nothing is uploaded. Expect a dark-humor reminder, not a personal attack.</p>
+      <div class="row">
+        <button id="clearVisitHistory" type="button">Clear visit history</button>
+      </div>
+      <ul id="visitHistory" class="history" aria-live="polite"></ul>
+      <p id="emptyHistory" class="hint" hidden>No recent visits recorded.</p>
+    </section>
+
     <section aria-labelledby="h-more">
       <h2 id="h-more">Strict mode</h2>
       <label class="check">

@@ -25,11 +25,15 @@ Setup: load unpacked, open the settings page, check `chrome://extensions` shows 
 - [ ] Set an HTTPS audio URL, save, then visit a blocked site: it loops if reachable. An invalid URL is rejected.
 - [ ] When autoplay is denied, **Play sound** starts audio. Audio does not play in the settings preview.
 - [ ] **Go Back** returns to the previous page. **Open New Tab** opens a new tab and closes the blocked one.
+- [ ] Enable visit history: blocked visits appear in settings with the correct site and time; clear history removes them.
+- [ ] With visit logging on, enable automatic selfie capture and grant camera access: opening a blocked site stores a low-resolution selfie locally. Revoke camera access: the visit is still logged, and the blocking page explains that no selfie was saved.
+- [ ] Confirm settings preview does not record visits; records older than 3 days are removed when history is opened or another visit is logged; only the latest 50 are retained.
+- [ ] Disable visit history: new visits are no longer recorded; resetting defaults turns logging and camera capture off and clears history.
 
 **Switches**
 - [ ] Master toggle off: 5-second wait, then sites open normally. On: blocked again.
 - [ ] Strict mode on: toggling off, removing a site, or resetting needs 20 seconds and the typed phrase.
-- [ ] Reset to defaults clears everything, including audio and granted site access, and the previously blocked site opens.
+- [ ] Reset to defaults clears everything, including audio, visit history, camera settings and granted site access, and the previously blocked site opens.
 
 **Persistence**
 - [ ] Restart Chrome: the list, image, message, audio settings and master switch are unchanged and blocking still works.

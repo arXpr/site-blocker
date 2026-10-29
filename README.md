@@ -16,15 +16,16 @@ A Manifest V3 Chrome extension that blocks the websites you choose and shows you
 - **Subdomains:** blocking `instagram.com` also blocks `www.instagram.com`, `m.instagram.com` and any other subdomain. Blocking `news.ycombinator.com` blocks only that host and its subdomains, not `ycombinator.com`.
 - **Edit / Remove:** buttons on each row.
 - **Blocking screen:** pick an image (PNG, JPG, WebP, up to 2 MB), edit the headline and message, and optionally upload an audio file (MP3, WAV, OGG, MP4 or WebM, up to 4 MB) or enter an HTTP(S) audio URL. Audio loops while the blocked page is open; if the browser blocks autoplay, select **Play sound**. Select **Save blocking screen** to apply changes.
+- **Visit history:** optionally log blocked-site visits locally, and separately opt in to an automatic low-resolution selfie on each blocked-page open. Enabling selfies requests camera permission. Photos and visit records are never uploaded, expire after 3 days (up to 50 visits), and are pruned when history is opened or another visit is logged. Clear them in settings at any time.
 - **Master switch:** top right. Turning it off asks you to wait 5 seconds first.
 - **Strict mode:** turning blocking off, removing or changing a site, turning strict mode off, or resetting then needs a 20-second wait and a typed phrase.
-- **Reset to defaults:** clears the list, image, message, audio and strict mode.
+- **Reset to defaults:** clears the list, image, message, audio, visit history and strict mode.
 
 ## How it works
 
 `src/background.js` converts your list into `declarativeNetRequest` dynamic rules (`||domain^`, main-frame only) that redirect to `src/blocked.html`. The browser does the redirect itself, before the page loads: no content scripts, no DOM replacement, no timers. Rules are rebuilt whenever settings change, so edits are live and survive restarts. The redirect target is an extension page that the rules cannot match, so redirect loops are impossible.
 
-Permissions: `declarativeNetRequest` and `storage`, plus optional per-site host access requested when you add a site. Audio URL mode loads the URL you provide; uploaded audio stays in extension storage. You can revoke access in Chrome or remove a site from settings to release its access; sites without access are shown as inactive. No `tabs`.
+Permissions: `declarativeNetRequest` and `storage`, plus optional per-site host access requested when you add a site. The optional selfie feature requests camera permission only when enabled. Audio URL mode loads the URL you provide; uploaded audio, photos and visit records stay in extension storage. You can revoke access in Chrome or remove a site from settings to release its access; sites without access are shown as inactive. No `tabs`.
 
 ## Limitations (honest list)
 
